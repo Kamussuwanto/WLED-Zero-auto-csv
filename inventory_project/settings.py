@@ -18,8 +18,13 @@ DEBUG = True
 
 # Allows local testing alongside traffic within your phone hotspot network profile
 #ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.43.*']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.43.129', '192.168.43.*']
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '192.168.43.129',   # Your Windows Hotspot IPv4 Address
+    '192.168.43.39',    # Your ESP32-S3 Board IP address
+    '*'                 # Keeps development open to all incoming connections
+]
 
 
 # Application definition
