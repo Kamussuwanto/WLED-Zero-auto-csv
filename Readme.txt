@@ -1,3 +1,5 @@
+This repository is specific for ESP32S3 Zero (tiny board 18-pins)
+
 This note describe how to clone this project (einv_leddrawer) from 
 Github into local a local computer repository and flash ESP32S3 firmware.
 
