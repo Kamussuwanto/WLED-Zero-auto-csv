@@ -28,3 +28,19 @@ alt:---
 *Set up a virtual environment:
 python3 -m venv myenv
 source myenv/bin/activate
+
+
+
+
+
+Test with:
+http://192.168.43.244:8000/parts/
+http://127.0.0.1:8000/parts/
+http://192.168.43.244:8000/admin/
+http://192.168.43.244/ page not found landing
+
+for esp32s3 Zero board
+http://192.168.43.129:8000/parts/
+http://127.0.0.1:8000/parts/
+http://192.168.43.129:8000/admin/
+http://192.168.43.129/ page not found landing

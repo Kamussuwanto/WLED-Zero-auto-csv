@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 
 // Hardware Configurations
-#define LED_PIN     18   // Pin connected to the WS2812B Data line
+#define LED_PIN     2   // Pin 18 esp32s3 n16r8 connected to the WS2812B Data line
 #define NUM_LEDS    50   // Total number of drawers/LEDs
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
