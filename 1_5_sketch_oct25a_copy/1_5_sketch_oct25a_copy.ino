@@ -1,11 +1,21 @@
+
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Adafruit_NeoPixel.h>
 
 // Hardware Configurations
-#define LED_PIN     2   // Pin 18 esp32s3 n16r8 connected to the WS2812B Data line
+#define LED_PIN     2  
+// Pin 2 for waveshare eps32s3 Zero connected to the WS2812B Data line
+// Pin 18 for eps32s3 N16R8 connected to the WS2812B Data line
 #define NUM_LEDS    50   // Total number of drawers/LEDs
+
+// --- LED Timeout Configuration ---
+unsigned long ledTurnOnTime = 0;          // Stores the exact millisecond timestamp when the LED turned on
+const unsigned long LED_TIMEOUT = 10000;  // Auto-timeout duration in milliseconds (10000 ms = 10 seconds)
+bool ledsAreActive = false;               // Flag tracking whether the strip is currently illuminated
+
+
 Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // Wi-Fi Parameters
@@ -14,19 +24,30 @@ const char* password = "aaaaDddd";
 
 WebServer server(80);
 
+
+
 void handleLight() {
   if (server.hasArg("led")) {
-    int target_led = server.arg("led").toInt();
-    if (target_led >= 0 && target_led < NUM_LEDS) {
-      strip.clear();
-      // Green flash (R=0, G=255, B=0)
-      strip.setPixelColor(target_led, strip.Color(0, 255, 0)); 
-      strip.show();
-      server.send(200, "text/plain", "OK: Lit up LED " + String(target_led));
-      return;
-    }
+    int targetLed = server.arg("led").toInt();
+    
+    // 1. Clear any previous colors on the strip
+    strip.clear();
+    
+    // 2. Set the target drawer LED (e.g., Bright Green: R=0, G=255, B=0)
+    strip.setPixelColor(targetLed, strip.Color(0, 255, 0));
+    strip.show();
+    
+    // 3. Set timer flags for non-blocking auto-off
+    ledTurnOnTime = millis();
+    ledsAreActive = true;
+    
+    server.send(200, "text/plain", "OK");
+    Serial.print("⚡ LED "); 
+    Serial.print(targetLed); 
+    Serial.println(" activated. Timeout timer started.");
+  } else {
+    server.send(400, "text/plain", "Missing 'led' argument");
   }
-  server.send(400, "text/plain", "Missing or invalid 'led' parameter");
 }
 
 void setup() {
@@ -67,6 +88,18 @@ void setup() {
 }
 
 void loop() {
+  // Keeps your HTTP web server alive and listening for Django requests
   server.handleClient();
-  delay(1); // Yield execution briefly to core background tasks
+  
+  // Non-blocking timeout checker
+  if (ledsAreActive && (millis() - ledTurnOnTime >= LED_TIMEOUT)) {
+    strip.clear();   // Clear pixel colors arrays
+    strip.show();    // Write the blank buffer physically to the WS2812B strip
+    ledsAreActive = false; // Turn off the flag tracking engine
+    
+    Serial.println("⏳ LED Auto-timeout reached. Strip turned off automatically.");
+  }
 }
+
+
+

@@ -7,6 +7,9 @@ from django.contrib import messages
 from .models import ElectronicPart, ElectronicTool
 
 
+import csv
+import io
+
 #from django.shortcuts import render, redirect
 from django.db.models import Q
 #from .models import ElectronicPart, ElectronicTool
@@ -150,3 +153,69 @@ def inventory_search_view(request):
         'query': query
     }
     return render(request, 'inventory/part_list.html', context)
+
+
+
+
+def bulk_import_parts(request):
+    """Parses an uploaded CSV file and imports components directly into the database database."""
+    if request.method == "POST":
+        csv_file = request.FILES.get('csv_file')
+        
+        # Validation checks
+        if not csv_file:
+            messages.error(request, "Please upload a CSV file.")
+            return redirect('part_list') # Redirect back to your inventory dashboard view
+            
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "Invalid file format. Please upload a standard .csv extension file.")
+            return redirect('part_list')
+
+        try:
+            # Read file stream safely as text string layer
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            
+            # Skip the column names header row
+            next(io_string)
+            
+
+            created_count = 0
+            for row in csv.reader(io_string, delimiter=','):
+                # Skip blank or incomplete rows
+                if not row or len(row) < 3:
+                    continue
+                    
+                # Extract columns cleanly (Name, LED Index, Quantity are standard core inputs)
+                name_val = row[0].strip()
+                led_index_val = int(row[1].strip()) if row[1].strip().isdigit() else 0
+                quantity_val = int(row[2].strip()) if row[2].strip().isdigit() else 0
+                
+                # Check for optional metadata fields in rows, fall back to empty string if not provided
+                part_num_val = row[3].strip() if len(row) > 3 else ""
+                value_val = row[4].strip() if len(row) > 4 else ""
+                package_val = row[5].strip() if len(row) > 5 else ""
+                location_val = row[6].strip() if len(row) > 6 else ""
+
+                # Commit directly to the verified database model schema
+                ElectronicPart.objects.create(
+                    name=name_val,
+                    led_index=led_index_val,
+                    quantity=quantity_val,
+                    part_number=part_num_val,
+                    value=value_val,
+                    package_type=package_val,
+                    storage_location=location_val
+                )
+                created_count += 1
+
+            
+                
+            messages.success(request, f"🎉 Successfully bulk-imported {created_count} new parts into the database database!")
+            
+        except Exception as e:
+            messages.error(request, f"❌ Error processing file: {str(e)}")
+            
+        return redirect('part_list')
+        
+    return redirect('part_list')

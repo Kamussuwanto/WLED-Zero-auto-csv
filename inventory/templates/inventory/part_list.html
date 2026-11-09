@@ -62,6 +62,20 @@
     {% endif %}
 
     <!-- ➕ ADD NEW ITEM SECTION -->
+
+
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px;">
+        <h3>Bulk Import Parts Template (.CSV)</h3>
+        <form action="{% url 'bulk_import_parts' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="csv_file" accept=".csv" required style="margin-right: 10px;">
+            <button type="submit" style="padding: 5px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                Upload & Process List
+            </button>
+        </form>
+    </div>
+
+
     <div class="box">
         <h3>➕ Add New Item to Stock</h3>
         <form method="POST" action="?{{ request.GET.urlencode }}">

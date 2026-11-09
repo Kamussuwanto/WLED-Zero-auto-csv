@@ -1,0 +1,4 @@
+name,led_index,quantity,part_number,value,package_type,storage_location
+ESP32-S3 Zero,2,5,MCU-S3-01,,SMD,Bin A1
+10K Resistor,3,100,RES-10K,10k ohm,Through-hole,Bin A2
+WS2812B Strip,4,2,LED-WS-50,,SMD,Bin B1
