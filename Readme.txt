@@ -35,13 +35,13 @@ source myenv/bin/activate
 
 
 
-Test with:
+for esp32s3 N16R8 Test with:
 http://192.168.43.244:8000/parts/
 http://127.0.0.1:8000/parts/
 http://192.168.43.244:8000/admin/
 http://192.168.43.244/ page not found landing
 
-for esp32s3 Zero board
+for esp32s3 Zero board, test with
 http://192.168.43.129:8000/parts/
 http://127.0.0.1:8000/parts/
 http://192.168.43.129:8000/admin/
