@@ -34,7 +34,7 @@ source myenv/bin/activate
 
 
 
-
+DJANGO DRAWER LED AUTO OFF, CSV, NO PWA FEATURES
 for esp32s3 N16R8 Test with:
 http://192.168.43.244:8000/parts/
 http://127.0.0.1:8000/parts/
